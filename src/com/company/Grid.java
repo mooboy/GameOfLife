@@ -10,8 +10,8 @@ public class Grid {
     // Constructor for a grid
     // x and y value setup the 2 dimensional array size
     public Grid(int r, int c) {
-        this.column = c;
         this.row = r;
+        this.column = c;
         this.board = new Cell[r][c];
     }
 
@@ -40,13 +40,8 @@ public class Grid {
     // boolean alive parameter determines the cells alive or dead status
     // When True then set cell value to 1; otherwise 0
     public void UpdateGrid(int x, int y, Boolean alive){
-        if(x < 0 || x >= this.row){
+        if(!AreCoordinatesWithinTheGrid(x, y))
             return;
-        }
-
-        if(y < 0 || y >= this.column) {
-            return;
-        }
 
         if(alive)
             this.board[x][y] = new Cell(x, y, true);
@@ -55,24 +50,11 @@ public class Grid {
     }
 
     public int CountAliveNeighbours(int x, int y) {
-        return CurrentNeighbours(x, y).size();
-//        int count = 0;
-//        count  += getState((x-1),(y-1));
-//        count  += getState(x,y-1);
-//        count  += getState(x+1,y-1);
-//
-//        count  += getState(x-1,y);
-//        count  += getState(x+1,y);
-//
-//        count  += getState((x-1),(y+1));
-//        count  += getState(x+1,y+1);
-//        count  += getState(x,y+1);
-//
-//        return count;
+        return this.GetCurrentNeighbours(x, y).size();
     }
 
 
-    public ArrayList<Cell> CurrentNeighbours(int x, int y) {
+    public ArrayList<Cell> GetCurrentNeighbours(int x, int y) {
         ArrayList<Cell> cells = new ArrayList<Cell>();
 
         if (getState((x-1),(y-1))==1)
@@ -98,13 +80,8 @@ public class Grid {
     // Get the value of given cell
     // if the index x or y, is out of bound, this will return 0
     public int getState(int x, int y) {
-        if(x < 0 || x>= this.row){
+        if(!AreCoordinatesWithinTheGrid(x, y))
             return 0;
-        }
-
-        if(y < 0 || y >= this.column) {
-            return 0;
-        }
 
         if(this.board[x][y] != null && this.board[x][y].getState()) {
             return 1;
@@ -114,7 +91,6 @@ public class Grid {
     }
 
     public void Play() {
-
         // Create a new board
         Cell[][] newBoard = new Cell[this.row][this.column];
 
@@ -142,7 +118,20 @@ public class Grid {
             }
         }
 
+        // Replace the current generation (board) with newly computed generation (newBoard)
         this.board = newBoard;
         PrintGrid();
+    }
+
+    private boolean AreCoordinatesWithinTheGrid(int x, int y) {
+        if(x < 0 || x >= this.row){
+            return false;
+        }
+
+        if(y < 0 || y >= this.column) {
+            return false;
+        }
+
+        return true;
     }
 }
